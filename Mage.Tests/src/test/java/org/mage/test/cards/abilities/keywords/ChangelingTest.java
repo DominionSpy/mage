@@ -161,4 +161,26 @@ public class ChangelingTest extends CardTestPlayerBase {
         assertSubtype("Game-Trail Changeling", SubType.SHAPESHIFTER);
         assertAbility(playerB, "Game-Trail Changeling", new ChangelingAbility(), false);
     }
+
+    @Test
+    public void test_FaceDownChangeling() {
+        addCard(Zone.BATTLEFIELD, playerA, "Inventor's Goggles");
+        addCard(Zone.BATTLEFIELD, playerA, "Scroll of Fate");
+        addCard(Zone.HAND, playerA, "Changeling Outcast");
+
+        // {T}: Manifest a card from your hand.
+        activateAbility(1, PhaseStep.PRECOMBAT_MAIN, playerA, "{T}");
+        addTarget(playerA, "Changeling Outcast");
+        waitStackResolved(1, PhaseStep.PRECOMBAT_MAIN, 1);
+
+        // Triggered ability of Inventor's Goggles should not fire
+        checkStackSize("stack is empty", 1, PhaseStep.PRECOMBAT_MAIN, playerA, 0);
+
+        setStrictChooseMode(true);
+        setStopAt(1, PhaseStep.END_TURN);
+        execute();
+
+        assertPermanentCount(playerA, "", 1);
+        assertAttachedTo(playerA, "", "Changeling Outcast", false);
+    }
 }

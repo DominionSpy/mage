@@ -1,6 +1,9 @@
 package mage.abilities.keyword;
 
 import mage.abilities.StaticAbility;
+import mage.abilities.condition.InvertCondition;
+import mage.abilities.condition.common.FaceDownSourceCondition;
+import mage.abilities.decorator.ConditionalContinuousEffect;
 import mage.abilities.effects.common.continuous.IsAllCreatureTypesSourceEffect;
 import mage.constants.Zone;
 
@@ -22,7 +25,11 @@ public class ChangelingAbility extends StaticAbility {
     }
 
     public ChangelingAbility(boolean changelingText) {
-        super(Zone.ALL, new IsAllCreatureTypesSourceEffect());
+        // 504.2. Face-down spells on the stack, face-down permanents in play, and face-down cards
+        // in the phased-out zone have no characteristics other than those listed by the ability
+        // or rules that allowed the card, spell, or permanent to be turned face down.
+        super(Zone.ALL, new ConditionalContinuousEffect(new IsAllCreatureTypesSourceEffect(),
+                new InvertCondition(FaceDownSourceCondition.instance), ""));
         this.changelingText = changelingText;
     }
 
